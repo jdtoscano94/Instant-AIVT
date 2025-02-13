@@ -154,7 +154,7 @@ def init_params_res(layers: List[int], initialization_type: str = 'xavier',Netwo
 
 
 def init_params_dict(layer_dict, initialization,Use_ResNet=False,Network_type='mlp',degree=5):
-    print(f'You selected: Network {Network_type} with degree(if KAN) {degree}, initialization {initialization},Use_ResNet {Use_ResNet}')
+    print(f'You selected: Network {Network_type} with degree(if KAN) {degree}, initialization {initialization}')
     if Network_type.lower()=='mlp':
         if Use_ResNet:
             init_function=init_params_res

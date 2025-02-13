@@ -13,34 +13,6 @@ import jax.numpy as jnp
 import jax
 
 
-def create_save_name(Eqn, Mode, use_RBA=False, Mod_MLP=False, Adaptive_AF=False, Weight_Norm=False,resample=False,batch_size=1):
-    save_name = f'{Eqn}:{Mode}'
-    if use_RBA:
-        save_name += 'RBA'
-    if Mod_MLP:
-        save_name += 'mMLP'
-    if Adaptive_AF:
-        save_name += 'AF'
-    if Weight_Norm:
-        save_name += 'WN'
-    if resample:
-        save_name += f'_BS:{batch_size}'
-    return save_name
-
-def create_save_nameSA(Eqn, Mode, use_RBA=False, Mod_MLP=False, Adaptive_AF=False, Weight_Norm=False,resample=False,batch_size=1):
-    save_name = f'{Eqn}:{Mode}'
-    if use_RBA:
-        save_name += 'SA'
-    if Mod_MLP:
-        save_name += 'mMLP'
-    if Adaptive_AF:
-        save_name += 'AF'
-    if Weight_Norm:
-        save_name += 'WN'
-    if resample:
-        save_name += f'_BS:{batch_size}'
-    return save_name
-    
     
 def create_and_return_directories(save_path, dataset_name, subdirectories):
     # Base directory

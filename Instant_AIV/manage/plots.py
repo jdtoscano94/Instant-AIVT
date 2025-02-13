@@ -581,6 +581,7 @@ def process_uneven_data(X,Y,V):
     Vi = interpolator(x, y)
     return x,y,Vi
 
+
 def plot_losses_grid(log_loss,num_cols=3,fig_h=16,fig_v=12):
     
     titles = list(log_loss[0].keys())
@@ -594,6 +595,17 @@ def plot_losses_grid(log_loss,num_cols=3,fig_h=16,fig_v=12):
     if num_rows == 1:
         axs = np.array([axs])
 
+
+    plot_its=0
+    time_all=0
+    it_all=0
+    for i, title in enumerate(titles):
+        if title=='it':
+            it_all = [entry[title] for entry in log_loss]
+            plot_its=1
+        if title=='time':
+            time_all = [entry[title] for entry in log_loss]
+
     for i, title in enumerate(titles):
         row = i // 3
         col = i % 3
@@ -602,7 +614,10 @@ def plot_losses_grid(log_loss,num_cols=3,fig_h=16,fig_v=12):
         # Extract values for a specific loss from all dictionary entries
         loss_values = [entry[title] for entry in log_loss]
 
-        ax.plot(loss_values, label=title, color='k')
+        if plot_its:
+            ax.plot(it_all,loss_values, label=title, color='k')
+        else:
+            ax.plot(loss_values, label=title, color='k')
         ax.set_title(title)
         ax.set_yscale('log')  # set y-axis to log scale
         ax.grid(True, which="both", ls="--", c='0.65')
@@ -611,6 +626,12 @@ def plot_losses_grid(log_loss,num_cols=3,fig_h=16,fig_v=12):
         ax.set_xlabel('Iterations (10e2)')
 
     plt.tight_layout()
+    if plot_its:
+        return it_all,time_all
+
+
+
+
 def get_pdf(u_hist,bins=30):
     hist,bins=np.histogram(u_hist,bins=bins,density=True)
     prob_density=hist
