@@ -80,7 +80,7 @@ mpl.rcParams['font.size'] = 20
 # %%
 parser = argparse.ArgumentParser(description='Tunning_parameters')
 parser.add_argument('--run_type'   , type=str  , default='Rayleigh_Bernard')
-parser.add_argument('--Name' , type=str  , default='Layers_')
+parser.add_argument('--Name' , type=str  , default='Layers2_')
 parser.add_argument('--mode'       , type=str  , default='PINN')
 parser.add_argument('--Run_MODE'   , type=str  , default='Train')
 

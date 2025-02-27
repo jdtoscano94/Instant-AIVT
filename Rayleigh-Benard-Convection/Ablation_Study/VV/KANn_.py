@@ -2,7 +2,7 @@
 # %%
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="4"
 
 # %%
 import sys
@@ -82,7 +82,7 @@ parser = argparse.ArgumentParser(description='Tunning_parameters')
 parser.add_argument('--run_type'   , type=str  , default='RB_Ablation_Study')
 parser.add_argument('--Name' , type=str  , default='VV_')
 parser.add_argument('--mode'       , type=str  , default='PINN')
-parser.add_argument('--Run_MODE'   , type=str  , default='Train')
+parser.add_argument('--Run_MODE'   , type=str  , default='Plots')
 
 parser.add_argument('--num_layer'  , type=int  , default=7)
 parser.add_argument('--width_layer', type=int  , default=64)
@@ -1717,20 +1717,24 @@ params_test= init_params_dict(layer_dict=layers_test,
 
 
 # %%
-layers_1 = layers_test['uvwT']
-params_test=params_test['uvwT']
-params_length=len(params_test['params'])
-params_length_AF=len(params_test['AdaptiveAF'])
-_,_,params_test_1=log_params[-1]
-
-# %%
-All_params=[]
-for params_test in tqdm.tqdm(log_params):
-    _,_,params_it=params_test
+if not (Run_MODE=='Train'):
+    _,_,params_test=params
+    layers_1 = layers_test['uvwT']
+    params_test=params_test['uvwT']
+    params_length=len(params_test['params'])
+    params_length_AF=len(params_test['AdaptiveAF'])
+    _,_,params_test_1=params
+    All_params=[]
+    _,_,params_it=params
     numpy_arrays_list = extract_arrays_from_params(params_it['uvwT'])
     All_params.append(numpy_arrays_list)
-if Run_MODE=='Train':
-    save_all_params(All_params,all_params_path)
+else:
+    All_params=[]
+    for params_test in tqdm.tqdm(log_params):
+        _,_,params_it=params_test
+        numpy_arrays_list = extract_arrays_from_params(params_it['uvwT'])
+        All_params.append(numpy_arrays_list)
+        save_all_params(All_params,all_params_path)
 
 # %%
 loaded_All_params=read_all_params(all_params_path)
@@ -1740,8 +1744,22 @@ reconstructed_params1 = reconstruct_params(params_test_1.copy(), params_length,p
 reconstructed_params2 = reconstruct_params(params_test_2.copy(), params_length,params_length_AF)
 
 
-# %%
 
+# %%
+lam = {
+    'Data': 1.0,
+    'Data_T': 0.0,                    
+    'Bcs_T': 1.0,
+    'Bcs_B': 1.0,
+    'Test': 0.1,
+    'Res': 0.1,
+    'GT': 0.1,
+    'Mx': 0.1,
+    'My': 1.0,
+    'Mass':0.1,
+    'Mz':0.1,
+    'MT':1.0,
+}
 @jit
 def get_loss_landscape(params, lambdas,lam,Ra, opt_state, dataset: Dict[str, np.ndarray], batch_indices: Dict[str, np.ndarray]):
     # Compute the predictions based on the given functions.
@@ -1782,20 +1800,20 @@ def get_loss_landscape(params, lambdas,lam,Ra, opt_state, dataset: Dict[str, np.
     
         
         loss_vals = {
-            'Mx':  lam['Mx']*MSE(r_eq[:, 0:1], 0.0, weight=1),
-            'My':  lam['My']*MSE(r_eq[:, 1:2], 0.0, weight=1),
-            'Mz':  lam['Mz']*MSE(r_eq[:, 2:3], 0.0, weight=1),
-            'Mass':lam['Mass']*MSE(r_eq[:, 3:4], 0.0, weight=1),
-            'MT':  lam['MT']*MSE(r_eq[:, 4:5], 0.0, weight=1),
-            'Omega_x':lam['Mass']*MSE(r_eq[:, 5:6], 0.0, weight=1),
-            'Omega_y':lam['Mass']*MSE(r_eq[:, 6:7], 0.0, weight=1),
-            'Omega_z':lam['Mass']*MSE(r_eq[:, 7:8], 0.0, weight=1),
-            'Data_u':lam['Data']*MSE(r_pred_data[:, 0:1], 0.0, weight=1),
-            'Data_v':10*lam['Data']*MSE(r_pred_data[:, 1:2], 0.0, weight=1),
-            'Data_w':10*lam['Data']*MSE(r_pred_data[:, 2:3], 0.0, weight=1),
-            'Data_T':lam['Data_T']*MSE(r_pred_data_T, 0.0, weight=1),
-            'Bcs_B':lam['Bcs_B']*MSE(r_pred_bcb, 0.0, weight=1),
-            'Bcs_T':lam['Bcs_T']*MSE(r_pred_bct, 0.0, weight=1),
+            'Mx':  lam['Mx']*MAE(r_eq[:, 0:1], 0.0, weight=1),
+            'My':  lam['My']*MAE(r_eq[:, 1:2], 0.0, weight=1),
+            'Mz':  lam['Mz']*MAE(r_eq[:, 2:3], 0.0, weight=1),
+            'Mass':lam['Mass']*MAE(r_eq[:, 3:4], 0.0, weight=1),
+            'MT':  lam['MT']*MAE(r_eq[:, 4:5], 0.0, weight=1),
+            'Omega_x':lam['Mass']*MAE(r_eq[:, 5:6], 0.0, weight=1),
+            'Omega_y':lam['Mass']*MAE(r_eq[:, 6:7], 0.0, weight=1),
+            'Omega_z':lam['Mass']*MAE(r_eq[:, 7:8], 0.0, weight=1),
+            'Data_u':lam['Data']*MAE(r_pred_data[:, 0:1], 0.0, weight=1),
+            'Data_v':10*lam['Data']*MAE(r_pred_data[:, 1:2], 0.0, weight=1),
+            'Data_w':10*lam['Data']*MAE(r_pred_data[:, 2:3], 0.0, weight=1),
+            'Data_T':lam['Data_T']*MAE(r_pred_data_T, 0.0, weight=1),
+            'Bcs_B':lam['Bcs_B']*MAE(r_pred_bcb, 0.0, weight=1),
+            'Bcs_T':lam['Bcs_T']*MAE(r_pred_bct, 0.0, weight=1),
         }
         # Total Loss
         total_loss = sum(loss_vals.values())
@@ -1826,8 +1844,182 @@ training_path=loaded_All_params
 p_coords = PCACoordinates(training_path)
 
 # %%
+#Test recunstruction
+params_batch= alpha,beta,reconstructed_params2
+# %%
+u_fx, v_fx,w_fx, _ , T_fx     = u_model(params_batch)
+# Further computations for errors if any
+u_pred  = vmap(u_fx, (0))(dataset['Data_T'][:,0:layers_1[0]])[:,None]
+v_pred  = vmap(v_fx, (0))(dataset['Data_T'][:,0:layers_1[0]])[:,None]
+w_pred  = vmap(w_fx, (0))(dataset['Data_T'][:,0:layers_1[0]])[:,None]
+T_pred  = vmap(T_fx, (0))(dataset['Data_T'][:,0:layers_1[0]])[:,None]
+velocity_magnitude = np.sqrt(u_pred**2 + v_pred**2 + w_pred**2)
+
+u_real=dataset['Data_T'][:,4:5]
+v_real=dataset['Data_T'][:,5:6]
+w_real=dataset['Data_T'][:,6:7]
+T_real=dataset['Data_T'][:,7:8]
+
+RL2_u = relative_error2(u_pred, dataset['Data_T'][:,4:5])
+RL2_v = relative_error2(v_pred, dataset['Data_T'][:,5:6])
+RL2_w = relative_error2(w_pred, dataset['Data_T'][:,6:7])
+RL2_T = relative_error2(T_pred, dataset['Data_T'][:,7:8])
+print(f'Relative L2 errors for u:{RL2_u:.4e},v:{RL2_v:.4e},w:{RL2_w:.4e},T:{RL2_T:.4e}')
+u_max, u_min = np.max(u_pred), np.min(u_pred)
+v_max, v_min = np.max(v_pred), np.min(v_pred)
+w_max, w_min = np.max(w_pred), np.min(w_pred)
+T_max, T_min = np.max(T_pred), np.min(T_pred)
+vmag_max, vmag_min= np.max(velocity_magnitude), np.min(velocity_magnitude)
+
+# %%
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# --- Function: Extract Coordinates from Training Path ---
+def weights_to_coordinates(coords, training_path):
+    """
+    Given a PCACoordinates instance and a training path (list of parameter snapshots),
+    this function returns an array of 2D coordinates representing the trajectory.
+    """
+    # Use the two principal directions stored in the PCACoordinates instance
+    components = [coords.v0_, coords.v1_]
+    comp_matrix = vectorize_weight_list_(components)  # shape: (flattened_param_dim, 2)
+    comp_matrix_i = np.linalg.pinv(comp_matrix)         # pseudoinverse for projection
+    # Vectorize the origin (we take the last snapshot as origin)
+    w_c = vectorize_weights_(training_path[-1])
+    # For each snapshot, subtract the origin and project onto the two directions
+    coord_path = np.array(
+        [
+            comp_matrix_i @ (vectorize_weights_(weights) - w_c)
+            for weights in training_path
+        ]
+    )
+    return coord_path
+
+# --- Extract the Coordinates ---
+coord_path = weights_to_coordinates(p_coords, loaded_All_params)
+print("Coordinate path shape:", coord_path.shape)
+
+# Compute maximum absolute values (for normalization purposes)
+max_a = np.max(np.abs(coord_path[:, 0]))
+max_b = np.max(np.abs(coord_path[:, 1]))
+print(f"Max_a: {max_a}, Max_b: {max_b}")
+
+# --- Plot the Training Path ---
+plt.figure(figsize=(8, 6))
+plt.scatter(coord_path[:, 0], coord_path[:, 1], c='blue', edgecolors='k')
+plt.plot(coord_path[:, 0], coord_path[:, 1], linestyle='-', color='blue', alpha=0.5)
+plt.xlabel("Coordinate 1")
+plt.ylabel("Coordinate 2")
+plt.title("Training Path in PCA Space")
+plt.grid()
+plot_filename = big_path + '/PCA_path.png'
+plt.savefig(plot_filename)
+plt.show()
+print(f"Training path plot saved to {plot_filename}")
+
+# --- Save Coordinates as CSV ---
+# Raw coordinates
+csv_path = big_path + '/PCA_path.csv'
+np.savetxt(csv_path, coord_path, delimiter=",")
+print(f"Training path coordinates saved to {csv_path}")
+
+# Normalized coordinates (normalize a and b separately)
+norm_coords = coord_path / np.array([max_a, max_b])
+csv_path_norm = big_path + '/PCA_path_norm.csv'
+np.savetxt(csv_path_norm, norm_coords, delimiter=",")
+print(f"Normalized training path coordinates saved to {csv_path_norm}")
+
+
+# %%
+import numpy as np
+
+# Function to compute the L2 error between two sets of parameters
+def compute_l2_error(params1, params2):
+    vec1 = vectorize_weights_(params1)
+    vec2 = vectorize_weights_(params2)
+    return np.linalg.norm(vec1 - vec2)/np.linalg.norm(vec1)
+
+# Obtain the 2D coordinates of the training path using your provided function
+coord_path = weights_to_coordinates(p_coords, loaded_All_params)
+
+errors = []
+for i, original_params in enumerate(loaded_All_params):
+    # Extract the 2D coordinate for this snapshot
+    a, b = coord_path[i]
+    # Reconstruct the parameters using your PCACoordinates mapping
+    reconstructed_params = p_coords(a, b)
+    # Compute the L2 error between the original and reconstructed parameters
+    error = compute_l2_error(original_params, reconstructed_params)
+    errors.append(error)
+
+errors = np.array(errors)
+mean_error = np.mean(errors)
+print("Mean L2 error over the training path:", mean_error)
+
+
+# %%
+coords_list = []
+N_batches=10
+for a,b in tqdm.tqdm(coord_path):
+    params_test=p_coords(a,b)
+    recovered_params={
+            'uvwT':reconstruct_params(params_test.copy(), params_length,params_length_AF)
+            }
+    epoch_losses = []
+    for it in range(N_batches):
+        #Sample Points
+        batch_indices=sample_points_PDF(it,BATCH_SIZES,dataset,lambdas,k=0.0,c=args.c_samp)# k=0 implies uniform sampling
+        batch_data = {key: dataset[key][batch_indices[key]] for key in BATCH_SIZES}   
+        #Update parameters
+        params_batch= alpha,beta,recovered_params
+        batch_losses = get_loss_landscape(
+        params_batch,lambdas,lam,Ra, opt_state, batch_data,batch_indices)
+        epoch_losses.append(batch_losses)
+    losses_dict = {key: np.mean([loss[key] for loss in jax.device_get(epoch_losses)]) for key in epoch_losses[0].keys()}
+    loss_it= jax.device_get(sum(losses_dict.values()))
+    coords_list.append((a, b,np.log(loss_it)))
+coords_array = np.array(coords_list)
+
+
+# %%
+max_a=np.max(np.abs(coords_array[:, 0]))/5
+max_b=np.max(np.abs(coords_array[:, 1]))/5
+print(f'Max_a:{max_a},Max_b:{max_b}')
+plt.figure(figsize=(8, 6))
+
+# Use scatter instead of plot to color points based on loss values
+sc = plt.scatter(coords_array[:, 0], coords_array[:, 1], 
+                 c=coords_array[:, 2], cmap='RdBu_r', marker='o', edgecolors='k')
+
+# Add a colorbar to visualize the loss values
+cbar = plt.colorbar(sc)
+cbar.set_label("Loss")
+
+# Connect points with lines to show the trajectory
+plt.plot(coords_array[:, 0], coords_array[:, 1], linestyle='-', color='blue', alpha=0.5)
+
+# Labels and title
+plt.xlabel("PCA Component 1")
+plt.ylabel("PCA Component 2")
+plt.title("Training Path in PCA Space")
+
+# Grid and saving
+plt.grid()
+plt.savefig(big_path + '/PCA_path.png')
+plt.show()
+#save csv
+csv_path=big_path+'PCA_path.csv'
+np.savetxt(csv_path, coords_array, delimiter=",")
+# Save normalized coords
+norm_coords=coords_array/np.array([max_a,max_b,1.0])
+csv_path=big_path+'PCA_path_norm.csv'
+np.savetxt(csv_path, norm_coords, delimiter=",")
+
+# %%
 reconstructed_params=reconstructed_params2
-N_batches=50
+N_batches=10
 epoch_losses = []
 loss_PDE = []
 loss_data = []
@@ -1860,13 +2052,13 @@ points=50
 coords=p_coords
 range_val=1.0
 #Define grid
-a_grid = jnp.linspace(-1.0, 1.0, num=points)**3 * range_val
-b_grid = jnp.linspace(-1.0, 1.0, num=points)**3 * range_val
-N_batches=50
+a_grid = jnp.linspace(-1.0, 1.0, num=points)**3 
+b_grid = jnp.linspace(-1.0, 1.0, num=points)**3 
+N_batches=10
 
 loss_PDE = []
 loss_data = []
-loss_grid = np.empty([len(a_grid), len(b_grid)])
+loss_grid = np.empty([len(max_a*a_grid), len(max_b*b_grid)])
 use_RBA=0
 for i, a in tqdm.tqdm(enumerate(a_grid)):
     for j, b in enumerate(b_grid):
@@ -1899,6 +2091,8 @@ for i, a in tqdm.tqdm(enumerate(a_grid)):
                                     losses_dict['Bcs_B'].item()+
                                     losses_dict['Bcs_T'].item()))
         loss_grid[j, i] = jax.device_get(sum(losses_dict.values()))
+
+# %%
 loss_BCs=loss_data
 # Assuming loss_PDE and loss_BCs are your data
 plt.figure(figsize=(8, 6))  # Optional: Adjusts the figure size
@@ -1909,7 +2103,7 @@ plt.title('Pareto Front')  # Title of the plot
 plt.legend()  # Displays a legend
 plt.grid(True, which="both", ls="--")  # Adds a grid for better readability; adjusts for log scale
 plt.savefig(result_path + f'RBA:{use_RBA}-{range_val}.png')
-plt.close()
+plt.show()
 np.save(big_path+"x.npy", jax.device_get(a_grid), allow_pickle=True)
 np.save(big_path+"y.npy", jax.device_get(b_grid), allow_pickle=True)
 np.save(big_path+"z.npy", loss_grid, allow_pickle=True)
@@ -1917,19 +2111,17 @@ _, path, colors = plot_training_path(p_coords, training_path, ax)
 col = np.array(list(colors))
 path = np.concatenate((path, col.reshape(-1, 1)), axis=1)
 np.savetxt(big_path+"path.csv", path, delimiter=",")
-plt.close()
+plt.show()
 _, path, colors = plot_training_path(p_coords, training_path, ax)
 col = np.array(list(colors))
 path = np.concatenate((path, col.reshape(-1, 1)), axis=1)
 np.savetxt(big_path+"path.csv", path, delimiter=",")
-plt.close()
+plt.show()
 x=jax.device_get(a_grid)
 y=jax.device_get(b_grid)
 z=loss_grid
 file_name_vtp=big_path+dataset_name
-# Replace 'inf' in z with non-infinite max
-non_inf_max = np.nanmax(z[np.isfinite(z)])
-z[z == float('inf')] = 10*non_inf_max
+
 
 # Create the surface plot
 fig = plt.figure()
@@ -1939,96 +2131,134 @@ ax.plot_surface(x, y, z)
 ax.set_xlabel('X Label')
 ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
-plt.close()
+plt.show()
 
 np_to_vtp(file_name_vtp, x, y, z, surf_name=f'RBA:{use_RBA}-{range_val}', log=True, zmax=-1, interp=-1)
 
 # %%
-points=50
-coords=p_coords
-range_val=10
-#Define grid
-a_grid = jnp.linspace(-1.0, 1.0, num=points)**3 * range_val
-b_grid = jnp.linspace(-1.0, 1.0, num=points)**3 * range_val
-N_batches=50
+import numpy as np
+import pandas as pd
 
-loss_PDE = []
-loss_data = []
-loss_grid = np.empty([len(a_grid), len(b_grid)])
-use_RBA=0
-for i, a in tqdm.tqdm(enumerate(a_grid)):
-    for j, b in enumerate(b_grid):
-        params_test=coords(a,b)
-        recovered_params={
-            'uvwT':reconstruct_params(params_test.copy(), params_length,params_length_AF)
-            }
-        epoch_losses = []
-        for it in range(N_batches):
-            #Sample Points
-            batch_indices=sample_points_PDF(it,BATCH_SIZES,dataset,lambdas,k=0.0,c=args.c_samp)# k=0 implies uniform sampling
-            batch_data = {key: dataset[key][batch_indices[key]] for key in BATCH_SIZES}   
-            #Update parameters
-            params_batch= alpha,beta,recovered_params
-            batch_losses = get_loss_landscape(
-            params_batch,lambdas,lam,Ra, opt_state, batch_data,batch_indices)
-            epoch_losses.append(batch_losses)
-        losses_dict = {key: np.mean([loss[key] for loss in jax.device_get(epoch_losses)]) for key in epoch_losses[0].keys()}
-        loss_PDE.append(jax.device_get(losses_dict['Mx'].item()+
-                                    losses_dict['My'].item()+
-                                    losses_dict['Mz'].item()+
-                                    losses_dict['Mass'].item()+
-                                    losses_dict['MT'].item()+
-                                    losses_dict['Omega_x'].item()+
-                                    losses_dict['Omega_y'].item()+
-                                    losses_dict['Omega_z'].item()))
-        loss_data.append(jax.device_get(losses_dict['Data_u'].item()+
-                                    losses_dict['Data_v'].item()+
-                                    losses_dict['Data_w'].item()+
-                                    losses_dict['Bcs_B'].item()+
-                                    losses_dict['Bcs_T'].item()))
-        loss_grid[j, i] = jax.device_get(sum(losses_dict.values()))
-loss_BCs=loss_data
-# Assuming loss_PDE and loss_BCs are your data
-plt.figure(figsize=(8, 6))  # Optional: Adjusts the figure size
-plt.loglog(loss_PDE, loss_BCs, 'o', label='Pareto Front')  # Plot with log scale on both axes
-plt.xlabel('Loss PDE')  # Label for x-axis
-plt.ylabel('Loss BCs')  # Label for y-axis
-plt.title('Pareto Front')  # Title of the plot
-plt.legend()  # Displays a legend
-plt.grid(True, which="both", ls="--")  # Adds a grid for better readability; adjusts for log scale
-plt.savefig(result_path + f'RBA:{use_RBA}-{range_val}.png')
-plt.close()
-np.save(big_path+"x.npy", jax.device_get(a_grid), allow_pickle=True)
-np.save(big_path+"y.npy", jax.device_get(b_grid), allow_pickle=True)
-np.save(big_path+"z.npy", loss_grid, allow_pickle=True)
-_, path, colors = plot_training_path(p_coords, training_path, ax)
-col = np.array(list(colors))
-path = np.concatenate((path, col.reshape(-1, 1)), axis=1)
-np.savetxt(big_path+"path.csv", path, delimiter=",")
-plt.close()
-_, path, colors = plot_training_path(p_coords, training_path, ax)
-col = np.array(list(colors))
-path = np.concatenate((path, col.reshape(-1, 1)), axis=1)
-np.savetxt(big_path+"path.csv", path, delimiter=",")
-plt.close()
-x=jax.device_get(a_grid)
-y=jax.device_get(b_grid)
-z=loss_grid
-file_name_vtp=big_path+dataset_name
-# Replace 'inf' in z with non-infinite max
-non_inf_max = np.nanmax(z[np.isfinite(z)])
-z[z == float('inf')] = 10*non_inf_max
+# Create a structured dataset
+X, Y = np.meshgrid(a_grid, b_grid)
+Z = np.log(loss_grid)  # Z represents loss
 
-# Create the surface plot
-fig = plt.figure()
+# Flatten data for saving
+grid_data = np.column_stack((X.ravel(), Y.ravel(), Z.ravel(), Z.ravel()))
+
+# Save with explicit "Loss" column
+df_grid = pd.DataFrame(grid_data, columns=["X", "Y", "Z", "Loss"])
+df_grid.to_csv(big_path+"loss_surface.csv", index=False)
+
+print("Saved loss surface as loss_surface.csv")
+
+
+# %%
+path_landscape=big_path+'loss_surface.csv'
+path_to_path=big_path+'PCA_path.csv'
+#read csv
+df = pd.read_csv(path_landscape)
+df2 = pd.read_csv(path_to_path)
+# Extract columns
+X = df['X'].values
+Y = df['Y'].values
+Z = df['Z'].values
+Loss = df['Loss'].values
+
+#Extract path
+array_df2 = df2.to_numpy()
+a_path = array_df2[:, 0]
+b_path = array_df2[:, 1]
+loss_path = array_df2[:, 2]
+
+
+
+# %%
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Load data from CSV
+df = pd.read_csv(path_landscape)
+df2 = pd.read_csv(path_to_path)
+
+# Extract loss landscape data
+X = df['X'].values
+Y = df['Y'].values
+Z = df['Z'].values
+Loss = df['Loss'].values
+
+# Extract training path data
+array_df2 = df2.to_numpy()
+a_path = array_df2[:, 0]
+b_path = array_df2[:, 1]
+loss_path = array_df2[:, 2]
+
+# Define color limits
+vmin, vmax = 0.01, 4
+
+# Create meshgrid from unique X, Y values
+x_unique = np.unique(X)
+y_unique = np.unique(Y)
+X_grid, Y_grid = np.meshgrid(x_unique, y_unique)
+
+# Reshape Loss values to match the grid shape
+Loss_grid = Loss.reshape(len(y_unique), len(x_unique))
+
+# Create figure
+fig = plt.figure(figsize=(10, 7))
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(x, y, z)
 
-ax.set_xlabel('X Label')
-ax.set_ylabel('Y Label')
-ax.set_zlabel('Z Label')
-plt.close()
+# Set box aspect (Z appears twice as big as X and Y)
+ax.set_box_aspect([1, 1, 2])
 
-np_to_vtp(file_name_vtp, x, y, z, surf_name=f'RBA:{use_RBA}-{range_val}', log=True, zmax=-1, interp=-1)
+# Surface plot with color mapping
+surf = ax.plot_surface(-X_grid, Y_grid, Loss_grid, cmap="turbo", alpha=1.0, 
+                       edgecolor='None', antialiased=False, vmin=vmin, vmax=vmax, zorder=2)
 
+# Contour projection on the XY plane
+ax.contourf(-X_grid, Y_grid, Loss_grid, levels=30, cmap="turbo", zdir='z', 
+            offset=20*np.min(Loss_grid), vmin=vmin, vmax=vmax, zorder=1)
+
+# # Plot training path in 3D
+# ax.scatter(a_path, b_path, loss_path, color='k', s=20, label="Training Path (3D)", zorder=4)
+
+# Plot training path projected onto the XY plane
+ax.scatter(-a_path, b_path, 20*np.min(Loss_grid), color='white', s=1, label="Training Path (Projected)", zorder=3)
+
+# Adjust projection matrix to make Z visually larger
+def set_zscale(ax, scale=2.0):
+    ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([1, 1, scale, 1]))
+
+set_zscale(ax, scale=1.0)  # Stretch Z visually
+
+# Remove axis ticks and labels for a clean look
+ax.set_xticks([])
+ax.set_yticks([])
+ax.set_zticks([])
+ax.set_xticklabels([])
+ax.set_yticklabels([])
+ax.set_zticklabels([])
+ax.axis('off')
+
+# Remove grid lines
+ax.grid(False)
+
+# Set the color limits before adding the colorbar
+surf.set_clim(vmin, vmax)
+
+# Add color bar
+cbar = fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10)
+cbar.set_label("Loss (log scale)")
+cbar.outline.set_visible(False)
+
+# Ensure the legend is visible
+#ax.legend(loc='upper right')
+
+# Save the plot
+plt.savefig(big_path+'landscape.png', dpi=300,bbox_inches='tight', pad_inches=0)
+
+# Show the plot
+plt.show()
 
