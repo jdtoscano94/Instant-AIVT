@@ -13,7 +13,7 @@ We demonstrate that AIVT can **reconstruct and infer continuous, instantaneous v
 
 1. **Clone the repository**:
    ```sh
-   git clone https://github.com/YOUR_REPO_LINK_HERE.git
+   git clone https://github.com/jdtoscano94/Instant-AIVT.git
    cd YOUR_REPO_FOLDER
    ```
 
@@ -32,6 +32,8 @@ We demonstrate that AIVT can **reconstruct and infer continuous, instantaneous v
    - **MLP** with **282k parameters**  
 
    Each notebook contains all the necessary code to **replicate the results** presented in the paper.
+
+**Note:** To run this notebook, you need the source files located in `../Instant_AIVT`. These files should be automatically downloaded when the project is cloned. Ensure that all dependencies are installed before executing the notebooks.
 
 ## References
 
