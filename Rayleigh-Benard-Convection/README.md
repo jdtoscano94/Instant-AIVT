@@ -4,7 +4,7 @@
 This is the official implementation of the paper:  
 **"AIVT: Inference of turbulent thermal convection from measured 3D velocity data by physics-informed Kolmogorov-Arnold Networks".**
 
-![AIVT Framework](Framework.png)
+![AIVT Framework](AIV_Framework.png)
 
 We propose the **Artificial Intelligence Velocimetry-Thermometry (AIVT)** method to reconstruct a continuous and differentiable representation of temperature and velocity in turbulent convection from measured 3D velocity data. AIVT is based on **physics-informed Kolmogorov-Arnold Networks (cKANs)** and is trained by optimizing a loss function that minimizes residuals of the velocity data, boundary conditions, and governing equations. 
 
