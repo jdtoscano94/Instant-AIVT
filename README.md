@@ -33,19 +33,49 @@ Additional papers and updates will be added to this repository as they become av
    - **MLP** with **151k parameters**  
    - **MLP** with **282k parameters**  
 
-   Each notebook contains all the necessary code to **replicate the results** presented in the paper.
+   Each notebook contains all the necessary code to **replicate the results** presented in the paper. The results were generated using **JAX**, ensuring efficient computation with accelerated hardware support.
 
 **Note:** To run these notebooks, you need the source files located in `../Instant_AIVT`. These files should be automatically downloaded when the project is cloned. Ensure that all dependencies are installed before executing the notebooks.
 
 ## References
 
-If you use this repository in your research, please cite our work:
+If you use this repository in your research, please cite our related work:
 
 ```bibtex
+
+@article{anagnostopoulos2024residual,
+  title={Residual-based attention in physics-informed neural networks},
+  author={Anagnostopoulos, Sokratis J and Toscano, Juan Diego and Stergiopulos, Nikolaos and Karniadakis, George Em},
+  journal={Computer Methods in Applied Mechanics and Engineering},
+  volume={421},
+  pages={116805},
+  year={2024},
+  publisher={Elsevier}
+}
+
+@article{anagnostopoulos2024learning,
+  title={Learning in PINNs: Phase transition, total diffusion, and generalization},
+  author={Anagnostopoulos, Sokratis J and Toscano, Juan Diego and Stergiopulos, Nikolaos and Karniadakis, George Em},
+  journal={arXiv preprint arXiv:2403.18494},
+  year={2024}
+}
+
+@article{shukla2024comprehensive,
+  title={A comprehensive and fair comparison between mlp and kan representations for differential equations and operator networks},
+  author={Shukla, Khemraj and Toscano, Juan Diego and Wang, Zhicheng and Zou, Zongren and Karniadakis, George Em},
+  journal={Computer Methods in Applied Mechanics and Engineering},
+  volume={431},
+  pages={117290},
+  year={2024},
+  publisher={Elsevier}
+}
+
+
 @article{toscano2024inferring,
   title={Inferring turbulent velocity and temperature fields and their statistics from Lagrangian velocity measurements using physics-informed Kolmogorov-Arnold Networks},
   author={Toscano, Juan Diego and K{"a}ufer, Theo and Wang, Zhibo and Maxey, Martin and Cierpka, Christian and Karniadakis, George Em},
   journal={arXiv preprint arXiv:2407.15727},
   year={2024}
 }
+
 ```
