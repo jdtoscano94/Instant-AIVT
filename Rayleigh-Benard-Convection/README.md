@@ -26,3 +26,29 @@ Please cite our work as:
 ```
 
 
+
+## Instructions
+
+1. **Clone the repository**:
+   ```sh
+   git clone https://github.com/jdtoscano94/Instant-AIVT.git
+   cd YOUR_REPO_FOLDER
+   ```
+
+2. **Download the dataset**:  
+   The dataset is available [here](https://drive.google.com/file/d/1HXJGubY4J2TN4DOuhFA5pu_6A2rw7FgM/view?usp=drive_link).
+
+3. **Move the data to the correct directory**:  
+   ```sh
+   mv path_to_downloaded_data ../Data/Rayleigh-Benard-Convection/
+   ```
+
+4. **Run our models using the provided Jupyter notebooks**.  
+   The repository includes results for the following models:
+   - **cKAN** with **149k parameters**  
+   - **MLP** with **151k parameters**  
+   - **MLP** with **282k parameters**  
+
+   Each notebook contains all the necessary code to **replicate the results** presented in the paper. The results were generated using **JAX**, ensuring efficient computation with accelerated hardware support.
+
+**Note:** To run these notebooks, you need the source files located in `../Instant_AIVT`. These files should be automatically downloaded when the project is cloned. Ensure that all dependencies are installed before executing the notebooks.
