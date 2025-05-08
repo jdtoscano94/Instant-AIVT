@@ -6,11 +6,25 @@ This repository serves as a collection of code implementations for published and
 
 Currently, this repository contains the code for the following paper:
 
-1. **Toscano, J. D., Käufer, T., Wang, Z., Maxey, M., Cierpka, C., & Karniadakis, G. E. (2024).** Inferring turbulent velocity and temperature fields and their statistics from Lagrangian velocity measurements using physics-informed Kolmogorov-Arnold Networks. *arXiv preprint arXiv:2407.15727.*  
-   **Link:** [arXiv:2407.15727](https://arxiv.org/abs/2407.15727)
+1. **Toscano, J. D., Käufer, T., Wang, Z., Maxey, M., Cierpka, C., & Karniadakis, G. E. (2025).** AIVT: Inference of turbulent thermal convection from measured 3D velocity data by physics-informed Kolmogorov-Arnold networks. *Science Advances*, *11*(19). DOI: 10.1126/sciadv.ads5236
+   **Link:** [Science Advances DOI: 10.1126/sciadv.ads5236](https://www.science.org/doi/10.1126/sciadv.ads5236)
 
-Additional papers and updates will be added to this repository as they become available.
+If you find this content useful please consider citing out work as follows:
 
+```bibtex
+@article{toscano2025aivt,
+  title={AIVT: Inference of turbulent thermal convection from measured 3D velocity data by physics-informed Kolmogorov-Arnold networks},
+  author={Toscano, Juan Diego and K{\"a}ufer, Theo and Wang, Zhibo and Maxey, Martin and Cierpka, Christian and Karniadakis, George Em},
+  journal={Science Advances},
+  volume={11},
+  number={19},
+  year={2025},
+  month={May},
+  day={7},
+  doi={10.1126/sciadv.ads5236},
+  URL={https://www.science.org/doi/10.1126/sciadv.ads5236}
+}
+```
 ## Instructions
 
 1. **Clone the repository**:
@@ -20,7 +34,7 @@ Additional papers and updates will be added to this repository as they become av
    ```
 
 2. **Download the dataset**:  
-   The dataset is available [here](https://drive.google.com/file/d/1HXJGubY4J2TN4DOuhFA5pu_6A2rw7FgM/view?usp=drive_link).
+   The dataset is available [here](https://datadryad.org/dataset/doi:10.5061/dryad.jm63xsjnj#readme).
 
 3. **Move the data to the correct directory**:  
    ```sh
@@ -42,6 +56,17 @@ Additional papers and updates will be added to this repository as they become av
 If you use this repository in your research, please cite our related work:
 
 ```bibtex
+
+@article{toscano2025pinns,
+  title={From pinns to pikans: Recent advances in physics-informed machine learning},
+  author={Toscano, Juan Diego and Oommen, Vivek and Varghese, Alan John and Zou, Zongren and Ahmadi Daryakenari, Nazanin and Wu, Chenxi and Karniadakis, George Em},
+  journal={Machine Learning for Computational Science and Engineering},
+  volume={1},
+  number={1},
+  pages={1--43},
+  year={2025},
+  publisher={Springer}
+}
 
 @article{anagnostopoulos2024residual,
   title={Residual-based attention in physics-informed neural networks},
@@ -75,6 +100,13 @@ If you use this repository in your research, please cite our related work:
   title={Inferring turbulent velocity and temperature fields and their statistics from Lagrangian velocity measurements using physics-informed Kolmogorov-Arnold Networks},
   author={Toscano, Juan Diego and K{"a}ufer, Theo and Wang, Zhibo and Maxey, Martin and Cierpka, Christian and Karniadakis, George Em},
   journal={arXiv preprint arXiv:2407.15727},
+  year={2024}
+}
+
+@article{toscano2024kkans,
+  title={KKANs: Kurkova-Kolmogorov-Arnold Networks and Their Learning Dynamics},
+  author={Toscano, Juan Diego and Wang, Li-Lian and Karniadakis, George Em},
+  journal={arXiv preprint arXiv:2412.16738},
   year={2024}
 }
 

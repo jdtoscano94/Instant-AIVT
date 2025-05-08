@@ -14,14 +14,24 @@ We demonstrate that AIVT can **reconstruct and infer continuous, instantaneous v
 
 ## References
 
-Please cite our work as:
+
+1. **Toscano, J. D., Käufer, T., Wang, Z., Maxey, M., Cierpka, C., & Karniadakis, G. E. (2025).** AIVT: Inference of turbulent thermal convection from measured 3D velocity data by physics-informed Kolmogorov-Arnold networks. *Science Advances*, *11*(19). DOI: 10.1126/sciadv.ads5236
+   **Link:** [Science Advances DOI: 10.1126/sciadv.ads5236](https://www.science.org/doi/10.1126/sciadv.ads5236)
+
+If you find this content useful please consider citing out work as follows:
 
 ```bibtex
-@article{toscano2024inferring,
-  title={Inferring turbulent velocity and temperature fields and their statistics from Lagrangian velocity measurements using physics-informed Kolmogorov-Arnold Networks},
-  author={Toscano, Juan Diego and K{"a}ufer, Theo and Wang, Zhibo and Maxey, Martin and Cierpka, Christian and Karniadakis, George Em},
-  journal={arXiv preprint arXiv:2407.15727},
-  year={2024}
+@article{toscano2025aivt,
+  title={AIVT: Inference of turbulent thermal convection from measured 3D velocity data by physics-informed Kolmogorov-Arnold networks},
+  author={Toscano, Juan Diego and K{\"a}ufer, Theo and Wang, Zhibo and Maxey, Martin and Cierpka, Christian and Karniadakis, George Em},
+  journal={Science Advances},
+  volume={11},
+  number={19},
+  year={2025},
+  month={May},
+  day={7},
+  doi={10.1126/sciadv.ads5236},
+  URL={https://www.science.org/doi/10.1126/sciadv.ads5236}
 }
 ```
 
