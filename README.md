@@ -9,7 +9,7 @@ Currently, this repository contains the code for the following paper:
 1. **Toscano, J. D., Käufer, T., Wang, Z., Maxey, M., Cierpka, C., & Karniadakis, G. E. (2025).** AIVT: Inference of turbulent thermal convection from measured 3D velocity data by physics-informed Kolmogorov-Arnold networks. *Science Advances*, *11*(19). DOI: 10.1126/sciadv.ads5236
    **Link:** [Science Advances DOI: 10.1126/sciadv.ads5236](https://www.science.org/doi/10.1126/sciadv.ads5236)
 
-If you find this content useful please consider citing out work as follows:
+If you find this content useful please consider citing our work as follows:
 
 ```bibtex
 @article{toscano2025aivt,
