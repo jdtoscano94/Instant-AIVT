@@ -1,4 +1,4 @@
-# Instant (AIVT)
+# Instant Artificial Intelligence Velocimetry-Thermometry (AIVT)
 
 This repository serves as a collection of code implementations for published and upcoming papers on Artificial Intelligence Velocimetry-Thermometry (AIVT). It will be continuously updated with new research developments and additional resources.
 
